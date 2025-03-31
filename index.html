@@ -222,12 +222,12 @@
             { word: "ship", phonetic: "/ʃɪp/", meaning: "船", img: "🚢" },
             { word: "crown", phonetic: "/kraʊn/", meaning: "王冠", img: "👑"},
             { word: "brown", phonetic: "/braʊn/", meaning: "棕色的", img: "🟤" },
-            { word: "cow",     phonetic: "/kaʊ/",     meaning: "奶牛", img: "🐄" },
-            { word: "owl",     phonetic: "/aʊl/",     meaning: "猫头鹰",     img: "🦉"},
-            { word: "blouse",     phonetic: "/blaʊz/",     meaning: "女式衬衫",     img: "👚"},
+            { word: "cow", phonetic: "/kaʊ/", meaning: "奶牛", img: "🐄" },
+            { word: "owl", phonetic: "/aʊl/", meaning: "猫头鹰", img: "🦉"},
+            { word: "blouse", phonetic: "/blaʊz/", meaning: "女式衬衫", img: "👚"},
             { word: "cloud", phonetic: "/klaʊd/", meaning: "云朵", img: "☁️"},
-            { word: "house",phonetic: "/haʊs/",     meaning: "房子",     img: "🏠" },
-            { word: "mouse",     phonetic: "/maʊs/",     meaning: "老鼠",     img: "🐭" }
+            { word: "house",phonetic: "/haʊs/", meaning: "房子", img: "🏠" },
+            { word: "mouse", phonetic: "/maʊs/", meaning: "老鼠", img: "🐭" }
             ];
 
         // 以下JavaScript保持不变...
@@ -250,25 +250,29 @@
         // ▼▼▼ 从这里开始替换 ▼▼▼
          if ('speechSynthesis' in window) {
              // 微信浏览器特殊处理（新增代码）
-             const unlock = document.createElement('button');
-             unlock.style.display = 'none';
-             document.body.appendChild(unlock);
-             unlock.click();
-             document.body.removeChild(unlock);
+                try {
+                    const unlock = document.createElement('button');
+                    unlock.style.display = 'none';
+                    document.body.appendChild(unlock);
+                    unlock.click();
+                    document.body.removeChild(unlock);
+                } catch (e) {
+                    console.log('微信解锁处理');
+                }
 
-             const synth = window.speechSynthesis;
-             const utterance = new SpeechSynthesisUtterance(word);
-             utterance.lang = 'en-US';
+                const synth = window.speechSynthesis;
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
             
             // Edge浏览器兼容处理（原有代码）
-             if (navigator.userAgent.indexOf("Edg") > -1) {
+             if (navigator.userAgent.indexOf("Edge") > -1) {
                  const voices = synth.getVoices();
                  utterance.voice = voices.find(v => v.lang === 'en-US') || voices[0];
             }
 
             // 新增错误处理（新增代码）
              utterance.onerror = function(event) {
-                 alert('发音失败，请使用手机浏览器打开');
+                 alert('发音失败', event.error);
            };
             
              synth.speak(utterance);

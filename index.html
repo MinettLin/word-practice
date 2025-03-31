@@ -247,19 +247,36 @@
             });
         }
 
-        function speakWord(word) {
-            if ('speechSynthesis' in window) {
-                const synth = window.speechSynthesis;
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
-                
-                if (navigator.userAgent.indexOf("Edg") > -1) {
-                    const voices = synth.getVoices();
-                    utterance.voice = voices.find(v => v.lang === 'en-US') || voices[0];
-                }
-                
-                synth.speak(utterance);
+        // ▼▼▼ 从这里开始替换 ▼▼▼
+        if ('speechSynthesis' in window) {
+            // 微信浏览器特殊处理（新增代码）
+            const unlock = document.createElement('button');
+            unlock.style.display = 'none';
+            document.body.appendChild(unlock);
+            unlock.click();
+            document.body.removeChild(unlock);
+
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            
+            // Edge浏览器兼容处理（原有代码）
+            if (navigator.userAgent.indexOf("Edg") > -1) {
+                const voices = synth.getVoices();
+                utterance.voice = voices.find(v => v.lang === 'en-US') || voices[0];
             }
+
+            // 新增错误处理（新增代码）
+            utterance.onerror = function(event) {
+                alert('发音失败，请使用手机浏览器打开');
+            };
+            
+            synth.speak(utterance);
+        } else {
+            alert('当前环境不支持语音功能，请使用Chrome浏览器');
+        }
+        // ▲▲▲ 替换到这里结束 ▲▲▲
+    }
         }
 
         let currentWords = [];
